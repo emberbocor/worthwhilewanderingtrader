@@ -73,7 +73,7 @@ public final class WanderingTrades {
     private static MerchantOffer offer(WanderingTrader trader, TradeEntry entry) {
         ItemStack result = switch (entry.result()) {
             case TradeResult.ItemList items -> items.create(trader.getRandom());
-            case TradeResult.StructureMap map -> ItemStack.EMPTY;
+            case TradeResult.StructureMap map -> StructureMaps.create(trader, map, ServerConfig.settings().mapSearchRadius());
         };
         if (result.isEmpty()) {
             return null;
