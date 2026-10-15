@@ -6,7 +6,7 @@ Worthwhile Wandering Trader replaces the wandering trader's flowers and dyes wit
 
 The mod runs on the server only. Players join with a plain vanilla client and trade as usual.
 
-Available for NeoForge.
+Available for NeoForge, Forge and Fabric.
 
 ## Features
 
@@ -87,15 +87,26 @@ The search runs on the server thread, so the server waits for it, just like it d
 
 ## Requirements
 
-| | NeoForge |
-|---|---|
-| Minecraft | 1.21.1 |
-| Loader | NeoForge 21.1.1 or newer |
-| Jar | `worthwhilewanderingtrader-neoforge-1.21.1-<version>.jar` |
+| | NeoForge | Forge | Fabric |
+|---|---|---|---|
+| Minecraft | 1.21.1 | 1.21.1 | 1.21 or 1.21.1 |
+| Loader | NeoForge 21.1.1 or newer | Forge 52.0.0 or newer | Fabric Loader 0.15.11 or newer |
+| Other | | | Fabric API 0.102.0 or newer |
+| Jar | `worthwhilewanderingtrader-neoforge-1.21.1-<version>.jar` | `worthwhilewanderingtrader-forge-1.21.1-<version>.jar` | `worthwhilewanderingtrader-fabric-1.21-1.21.1-<version>.jar` |
+
+On Minecraft 1.21.1, NeoForge and Forge are separate loaders that do not run each other's mods, so each has its own jar. Pick the jar that matches your server's loader.
+
+The Fabric jar bundles [NightConfig](https://github.com/TheElectronWill/night-config) (core and toml, LGPL-3.0) to read the TOML config. NeoForge and Forge already ship it.
 
 ### Client and server
 
-Install the mod on the server only. It adds no items, blocks, entities, network messages or registries; the trades only contain items the client already knows. Vanilla clients and NeoForge clients without the mod can join and trade normally. Installing it on a client as well does no harm.
+Install the mod on the server only, on every loader. It adds no items, blocks, entities, network messages or registries, and the trades only contain items the client already knows:
+
+- **NeoForge:** vanilla clients and NeoForge clients without the mod can join and trade.
+- **Forge:** vanilla clients and Forge clients without the mod can join and trade. The mod is marked as server-only, so a Forge client without it still shows the server as compatible in the server list.
+- **Fabric:** vanilla clients and Fabric clients without the mod can join and trade. Fabric API is only needed on the server.
+
+Installing it on a client as well does no harm.
 
 In singleplayer, install it in your own game; the built-in server runs it.
 
@@ -200,9 +211,9 @@ The world opens normally. Wandering traders that already picked their trades kee
 
 ## Compatibility
 
-- **Mods that add wandering trader trades** (through NeoForge's wanderer trades event): in `replace` mode their trades are replaced along with the vanilla ones; in `add` mode they stay and the configured trades come after them.
+- **Mods that add wandering trader trades** through the loader's usual way (NeoForge's and Forge's wanderer trades event, Fabric API's `TradeOfferHelper`): these trades end up in the vanilla trade lists, so they behave like vanilla trades on every loader. In `replace` mode they are replaced along with the vanilla ones; in `add` mode they stay and the configured trades come after them.
 - **Trade Rebalance experiment:** works the same way. `replace` replaces its wandering trader trades, `add` keeps them.
-- **Async Locator Refined** moves vanilla structure searches (cartographer maps, treasure maps from chests, eyes of ender, dolphins, `/locate`) off the main server thread. It does not cover this mod's map trades, which search the same way vanilla's own code does, synchronously. It is still a good companion if vanilla maps make your server stutter; for this mod's maps, use `mapSearchRadius` as described above.
+- **Async Locator Refined** (NeoForge and Fabric) moves vanilla structure searches (cartographer maps, treasure maps from chests, eyes of ender, dolphins, `/locate`) off the main server thread. It does not cover this mod's map trades, which search the same way vanilla's own code does, synchronously. It is still a good companion if vanilla maps make your server stutter; for this mod's maps, use `mapSearchRadius` as described above.
 - Other mods that change how the wandering trader picks its trades may conflict; which one wins depends on the mod.
 
 ## Building from source
@@ -211,8 +222,8 @@ The world opens normally. Wandering traders that already picked their trades kee
 ./gradlew build
 ```
 
-The jar is written to `neoforge/build/libs/`.
+The jars are written to `neoforge/build/libs/`, `forge/build/libs/` and `fabric/build/libs/`.
 
 ## License
 
-MIT.
+MIT. The Fabric jar includes NightConfig, which is licensed under the LGPL-3.0.
