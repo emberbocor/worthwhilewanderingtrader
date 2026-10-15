@@ -66,19 +66,21 @@ public final class WanderingTrades {
                 return entries.remove(i);
             }
         }
-        return entries.removeLast();
+        return entries.remove(entries.size() - 1);
     }
 
     @Nullable
     private static MerchantOffer offer(WanderingTrader trader, TradeEntry entry) {
-        ItemStack result = switch (entry.result()) {
-            case TradeResult.ItemList items -> items.create(trader.getRandom());
-            case TradeResult.StructureMap map -> StructureMaps.create(trader, map, ServerConfig.settings().mapSearchRadius());
-        };
+        ItemStack result = ItemStack.EMPTY;
+        if (entry.result() instanceof TradeResult.ItemList items) {
+            result = items.create(trader.getRandom());
+        } else if (entry.result() instanceof TradeResult.StructureMap map) {
+            result = StructureMaps.create(trader, map, ServerConfig.settings().mapSearchRadius());
+        }
         if (result.isEmpty()) {
             return null;
         }
-        return new MerchantOffer(entry.price().toItemCost(), entry.price2().map(CostItem::toItemCost), result,
+        return new MerchantOffer(entry.price().toStack(), entry.price2().map(CostItem::toStack).orElse(ItemStack.EMPTY), result,
                 entry.maxUses(), VILLAGER_XP, PRICE_MULTIPLIER);
     }
 }

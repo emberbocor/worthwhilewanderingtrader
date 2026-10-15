@@ -34,18 +34,22 @@ dependencies {
 }
 
 loom {
+    mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName = "${mod_id}.refmap.json"
+    }
     runs {
         client {
             client()
             configName = 'Fabric Client'
             ideConfigGenerated(true)
-            runDir('runs/client')
+            runDir('../runs/1.20.1/fabric-client')
         }
         server {
             server()
             configName = 'Fabric Server'
             ideConfigGenerated(true)
-            runDir('runs/server')
+            runDir('../runs/1.20.1/fabric-server')
         }
     }
 }

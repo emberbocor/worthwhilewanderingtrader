@@ -1,36 +1,51 @@
 plugins {
     id 'multiloader-loader'
-    id 'net.minecraftforge.gradle'
+    id 'net.neoforged.moddev.legacyforge'
 }
 
-minecraft {
-    mappings channel: 'official', version: forge_minecraft_version
+legacyForge {
+    if (project.hasProperty('neoforge_version')) {
+        enable {
+            neoForgeVersion = neoforge_version
+        }
+    } else {
+        version = "${minecraft_version}-${forge_version}"
+    }
+    parchment {
+        minecraftVersion = parchment_minecraft_version
+        mappingsVersion = parchment_mappings_version
+    }
     runs {
         configureEach {
-            args "--mixin.config=${mod_id}.mixins.json"
+            gameDirectory = rootProject.file('runs/1.20.1/forge')
+            ideName = "Forge ${it.name.capitalize()} (${project.path})"
             systemProperty 'forge.logging.markers', 'REGISTRIES'
-            systemProperty 'forge.logging.console.level', 'debug'
+            logLevel = org.slf4j.event.Level.DEBUG
         }
-        register('client') {
-            workingDir = layout.projectDirectory.dir('runs/client')
+        client {
+            client()
         }
-        register('server') {
-            workingDir = layout.projectDirectory.dir('runs/server')
-            args '--nogui'
+        server {
+            server()
+            programArgument '--nogui'
+        }
+    }
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
         }
     }
 }
 
-repositories {
-    minecraft.mavenizer(it)
-    maven fg.forgeMaven
-    maven fg.minecraftLibsMaven
+mixin {
+    add(sourceSets.main, "${mod_id}.refmap.json")
+    config("${mod_id}.mixins.json")
 }
 
 dependencies {
-    implementation minecraft.dependency("net.minecraftforge:forge:${forge_minecraft_version}-${forge_version}")
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
-tasks.named('jar', Jar) {
+jar {
     manifest.attributes(['MixinConfigs': "${mod_id}.mixins.json"])
 }

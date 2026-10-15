@@ -154,8 +154,6 @@ final class ServerConfigFile {
                 "minecraft:music_disc_cat",
                 "minecraft:music_disc_blocks",
                 "minecraft:music_disc_chirp",
-                "minecraft:music_disc_creator",
-                "minecraft:music_disc_creator_music_box",
                 "minecraft:music_disc_far",
                 "minecraft:music_disc_mall",
                 "minecraft:music_disc_mellohi",
@@ -168,7 +166,6 @@ final class ServerConfigFile {
                 "minecraft:music_disc_relic",
                 "minecraft:music_disc_5",
                 "minecraft:music_disc_pigstep",
-                "minecraft:music_disc_precipice",
             ] }
             maxUses = 1
 
@@ -191,8 +188,6 @@ final class ServerConfigFile {
                 "minecraft:silence_armor_trim_smithing_template",
                 "minecraft:raiser_armor_trim_smithing_template",
                 "minecraft:host_armor_trim_smithing_template",
-                "minecraft:flow_armor_trim_smithing_template",
-                "minecraft:bolt_armor_trim_smithing_template",
             ] }
             maxUses = 1
 
@@ -228,7 +223,6 @@ final class ServerConfigFile {
                 "minecraft:desert_pyramid",
                 "minecraft:jungle_pyramid",
                 "minecraft:ancient_city",
-                "minecraft:trial_chambers",
             ] }
             maxUses = 1
 
@@ -284,9 +278,7 @@ final class ServerConfigFile {
                 "minecraft:burn_pottery_sherd",
                 "minecraft:danger_pottery_sherd",
                 "minecraft:explorer_pottery_sherd",
-                "minecraft:flow_pottery_sherd",
                 "minecraft:friend_pottery_sherd",
-                "minecraft:guster_pottery_sherd",
                 "minecraft:heart_pottery_sherd",
                 "minecraft:heartbreak_pottery_sherd",
                 "minecraft:howl_pottery_sherd",
@@ -294,7 +286,6 @@ final class ServerConfigFile {
                 "minecraft:mourner_pottery_sherd",
                 "minecraft:plenty_pottery_sherd",
                 "minecraft:prize_pottery_sherd",
-                "minecraft:scrape_pottery_sherd",
                 "minecraft:sheaf_pottery_sherd",
                 "minecraft:shelter_pottery_sherd",
                 "minecraft:skull_pottery_sherd",

@@ -6,13 +6,13 @@ Worthwhile Wandering Trader replaces the wandering trader's flowers and dyes wit
 
 The mod runs on the server only. Players join with a plain vanilla client and trade as usual.
 
-Available for NeoForge, Forge and Fabric.
+Available for Forge (also runs on NeoForge 1.20.1) and Fabric, for Minecraft 1.20.1. Items and structures added in Minecraft 1.21, such as the trial chambers map, are not part of this version.
 
 ## Features
 
 - **New trades.** Every wandering trader offers 3 buy trades and 8 sell trades: 1 very rare (with a 25% chance), 4 rare and 3 useful. When the very rare roll fails, the trader gets a fifth rare trade instead.
 - **Different every time.** Each trader picks its trades at random from the lists in the config, and items such as music discs, trim templates, logs and goat horns are picked at random per trader. No trade appears twice on one trader.
-- **Explorer maps.** A map trade leads to the nearest village, desert pyramid, jungle temple, ancient city or trial chambers that is not on any other map yet. It looks like a cartographer's map, with the vanilla icon and name where vanilla has one. When nothing is found nearby, the trader offers another rare trade instead.
+- **Explorer maps.** A map trade leads to the nearest village, desert pyramid, jungle temple or ancient city that is not on any other map yet. It looks like a cartographer's map, with a target marker and a name such as "Plains Village Map". When nothing is found nearby, the trader offers another rare trade instead.
 - **Everything is configurable.** Prices, amounts, how often a trade can be used, how many trades of each kind a trader has, the very rare chance and the map search radius. Any item can be used, including items from other mods.
 - **Replace or add.** By default the vanilla trades are replaced. The `add` mode keeps them and adds the configured trades after them.
 - **Vanilla feel.** Trades behave like vanilla wandering trader trades: same experience reward, no restocking, and the normal trading screen.
@@ -56,7 +56,7 @@ Only real water bottles are accepted; bottles of any other potion are refused.
 | Goat Horn (random instrument of a normal goat: Ponder, Sing, Seek or Feel) | 10 | 1 |
 | 2 Ender Pearls | 6 | 4 |
 | Eye of Ender | 8 | 2 |
-| Explorer map to a village, desert pyramid, jungle temple, ancient city or trial chambers (random) | 12 | 1 |
+| Explorer map to a village, desert pyramid, jungle temple or ancient city (random) | 12 | 1 |
 
 ### Useful (3 per trader)
 
@@ -79,7 +79,7 @@ For each group the trader picks entries at random, without picking the same entr
 
 A map entry lists structures, for example villages and ancient cities. When the trader picks its trades, one of them is chosen at random and the server searches for the nearest one that is not on any map yet, the same way a cartographer does. If none is found within the search radius, the other structures of the entry are tried; if none of them is found either, the trader gets another trade from the same group.
 
-- The map shows the target with the vanilla icon of that structure (village, jungle temple, swamp hut, woodland mansion, ocean monument, trial chambers) and has the vanilla name, such as "Plains Village Map". Structures without a vanilla icon, such as the desert pyramid and the ancient city, are marked with a red X and named after the structure ("Desert Pyramid Map").
+- Minecraft 1.20.1 only has map icons for the woodland mansion and the ocean monument, so those maps use them and every other structure is marked with a red X, like a buried treasure map. Mansion, monument and buried treasure maps have their vanilla names; the others are named after the structure, such as "Plains Village Map", "Jungle Explorer Map" or "Desert Pyramid Map", in English.
 - A structure handed out on a map is marked as known, exactly like vanilla explorer maps. Neither this mod nor cartographers send players to it again.
 - Maps are made in the dimension the trader is in. Searching for overworld structures from the Nether finds nothing, so the trader gets another trade.
 
@@ -87,23 +87,22 @@ The search runs on the server thread, so the server waits for it, just like it d
 
 ## Requirements
 
-| | NeoForge | Forge | Fabric |
-|---|---|---|---|
-| Minecraft | 1.21.1 | 1.21.1 | 1.21 or 1.21.1 |
-| Loader | NeoForge 21.1.1 or newer | Forge 52.0.0 or newer | Fabric Loader 0.15.11 or newer |
-| Other | | | Fabric API 0.102.0 or newer |
-| Jar | `worthwhilewanderingtrader-neoforge-1.21.1-<version>.jar` | `worthwhilewanderingtrader-forge-1.21.1-<version>.jar` | `worthwhilewanderingtrader-fabric-1.21-1.21.1-<version>.jar` |
+| | Forge / NeoForge | Fabric |
+|---|---|---|
+| Minecraft | 1.20.1 | 1.20 or 1.20.1 |
+| Loader | Forge 47.1.0 or newer, or NeoForge 1.20.1 (47.1.x) | Fabric Loader 0.14.21 or newer |
+| Other | | Fabric API 0.83.0 or newer |
+| Jar | `worthwhilewanderingtrader-forge-1.20.1-<version>.jar` | `worthwhilewanderingtrader-fabric-1.20-1.20.1-<version>.jar` |
 
-On Minecraft 1.21.1, NeoForge and Forge are separate loaders that do not run each other's mods, so each has its own jar. Pick the jar that matches your server's loader.
+On Minecraft 1.20.1, NeoForge still runs Forge mods, so the Forge jar is used for both.
 
-The Fabric jar bundles [NightConfig](https://github.com/TheElectronWill/night-config) (core and toml, LGPL-3.0) to read the TOML config. NeoForge and Forge already ship it.
+The Fabric jar bundles [NightConfig](https://github.com/TheElectronWill/night-config) 3.6.4 (core and toml, LGPL-3.0) to read the TOML config. Forge and NeoForge already ship it.
 
 ### Client and server
 
 Install the mod on the server only, on every loader. It adds no items, blocks, entities, network messages or registries, and the trades only contain items the client already knows:
 
-- **NeoForge:** vanilla clients and NeoForge clients without the mod can join and trade.
-- **Forge:** vanilla clients and Forge clients without the mod can join and trade. The mod is marked as server-only, so a Forge client without it still shows the server as compatible in the server list.
+- **Forge and NeoForge:** vanilla clients and Forge or NeoForge clients without the mod can join and trade. The mod is marked as server-only, so a client without it still shows the server as compatible in the server list.
 - **Fabric:** vanilla clients and Fabric clients without the mod can join and trade. Fabric API is only needed on the server.
 
 Installing it on a client as well does no harm.
@@ -205,15 +204,16 @@ A group without entries offers nothing. To remove a trade, delete its table; to 
 
 Mistakes do not crash the server. An entry with an unknown item, a count out of range, a missing `maxUses`, an unknown potion or instrument, or no known structure is skipped with a warning in the log. An unknown item inside an `items` list, or an unknown structure inside a `map` list, is only left out of that list. Other invalid values (an unknown `mode`, slots out of range) use their default with a warning, and unknown keys are reported and ignored. If the file cannot be read at all (for example a TOML syntax error), the default trades are used, the file is left untouched and the log says why.
 
+The config format is the same as in the 1.21.1 version of the mod, so a file from that version can be copied as it is. Entries with items or structures that do not exist in 1.20.1 (such as the trial chambers in a map list) are skipped or left out of their list with a warning.
+
 ## Removing the mod
 
 The world opens normally. Wandering traders that already picked their trades keep them, because the trades are saved with the trader; this includes maps that were already made. New wandering traders get vanilla trades. The config file stays in `config/` until you delete it.
 
 ## Compatibility
 
-- **Mods that add wandering trader trades** through the loader's usual way (NeoForge's and Forge's wanderer trades event, Fabric API's `TradeOfferHelper`): these trades end up in the vanilla trade lists, so they behave like vanilla trades on every loader. In `replace` mode they are replaced along with the vanilla ones; in `add` mode they stay and the configured trades come after them.
-- **Trade Rebalance experiment:** works the same way. `replace` replaces its wandering trader trades, `add` keeps them.
-- **Async Locator Refined** (NeoForge and Fabric) moves vanilla structure searches (cartographer maps, treasure maps from chests, eyes of ender, dolphins, `/locate`) off the main server thread. It does not cover this mod's map trades, which search the same way vanilla's own code does, synchronously. It is still a good companion if vanilla maps make your server stutter; for this mod's maps, use `mapSearchRadius` as described above.
+- **Mods that add wandering trader trades** through the loader's usual way (Forge's wanderer trades event, Fabric API's `TradeOfferHelper`): these trades end up in the vanilla trade lists, so they behave like vanilla trades on every loader. In `replace` mode they are replaced along with the vanilla ones; in `add` mode they stay and the configured trades come after them.
+- **Async Locator** (Forge and Fabric) moves vanilla structure searches (cartographer maps, treasure maps from chests, eyes of ender, dolphins, `/locate`) off the main server thread. It does not cover this mod's map trades, which search the same way vanilla's own code does, synchronously. It is still a good companion if vanilla maps make your server stutter; for this mod's maps, use `mapSearchRadius` as described above.
 - Other mods that change how the wandering trader picks its trades may conflict; which one wins depends on the mod.
 
 ## Building from source
@@ -222,7 +222,7 @@ The world opens normally. Wandering traders that already picked their trades kee
 ./gradlew build
 ```
 
-The jars are written to `neoforge/build/libs/`, `forge/build/libs/` and `fabric/build/libs/`.
+The jars are written to `forge/build/libs/` and `fabric/build/libs/`.
 
 ## License
 

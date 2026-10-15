@@ -22,6 +22,5 @@ plugins {
 
 rootProject.name = 'worthwhilewanderingtrader'
 include('common')
-include('neoforge')
-include('fabric')
 include('forge')
+include('fabric')

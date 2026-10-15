@@ -15,11 +15,9 @@ import io.github.emberbocor.worthwhilewanderingtrader.WorthwhileWanderingTrader;
 import io.github.emberbocor.worthwhilewanderingtrader.trade.CostItem;
 import io.github.emberbocor.worthwhilewanderingtrader.trade.TradeEntry;
 import io.github.emberbocor.worthwhilewanderingtrader.trade.TradeResult;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -30,6 +28,8 @@ import net.minecraft.world.item.Instrument;
 import net.minecraft.world.item.InstrumentItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.TippedArrowItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
@@ -182,7 +182,7 @@ final class ServerConfigReader {
         if (item == null) {
             throw new InvalidEntryException("unknown item '" + table.get("item") + "' in " + shortName(name));
         }
-        Optional<Holder<Potion>> potion = potion(table.get("potion"), name);
+        Optional<Potion> potion = potion(table.get("potion"), name);
         if (potion.isPresent()) {
             checkHoldsPotion(item);
         }
@@ -226,7 +226,7 @@ final class ServerConfigReader {
             items = items(name, itemsValue, count);
         }
 
-        Optional<Holder<Potion>> potion = potion(table.get("potion"), name);
+        Optional<Potion> potion = potion(table.get("potion"), name);
         Optional<HolderSet<Instrument>> instrument = instrument(table.get("instrument"), name);
         for (Item item : items) {
             if (potion.isPresent()) {
@@ -248,9 +248,9 @@ final class ServerConfigReader {
             Item item = item(id);
             if (item == null) {
                 warn("{}: unknown item '{}' left out of the list", name, id);
-            } else if (count > item.getDefaultMaxStackSize()) {
+            } else if (count > item.getMaxStackSize()) {
                 warn("{}: {} left out of the list, count {} is above its max stack size of {}",
-                        name, BuiltInRegistries.ITEM.getKey(item), count, item.getDefaultMaxStackSize());
+                        name, BuiltInRegistries.ITEM.getKey(item), count, item.getMaxStackSize());
             } else if (!items.contains(item)) {
                 items.add(item);
             }
@@ -290,23 +290,23 @@ final class ServerConfigReader {
             return id == null ? null : structures.getTag(TagKey.create(Registries.STRUCTURE, id)).orElse(null);
         }
         ResourceLocation id = ResourceLocation.tryParse(string);
-        return id == null ? null : structures.getHolder(id).<HolderSet<Structure>>map(holder -> HolderSet.direct(List.of(holder))).orElse(null);
+        return id == null ? null : structures.getHolder(ResourceKey.create(Registries.STRUCTURE, id)).<HolderSet<Structure>>map(holder -> HolderSet.direct(List.of(holder))).orElse(null);
     }
 
-    private static Optional<Holder<Potion>> potion(@Nullable Object value, String name) {
+    private static Optional<Potion> potion(@Nullable Object value, String name) {
         if (value == null) {
             return Optional.empty();
         }
         ResourceLocation id = value instanceof String string ? ResourceLocation.tryParse(string) : null;
-        Optional<Holder.Reference<Potion>> potion = id == null ? Optional.empty() : BuiltInRegistries.POTION.getHolder(id);
+        Optional<Potion> potion = id == null ? Optional.empty() : BuiltInRegistries.POTION.getOptional(id);
         if (potion.isEmpty()) {
             throw new InvalidEntryException("unknown potion '" + value + "' in " + shortName(name));
         }
-        return Optional.of(potion.get());
+        return potion;
     }
 
     private static void checkHoldsPotion(Item item) {
-        if (!item.components().has(DataComponents.POTION_CONTENTS)) {
+        if (!(item instanceof PotionItem) && !(item instanceof TippedArrowItem)) {
             throw new InvalidEntryException(BuiltInRegistries.ITEM.getKey(item) + " cannot hold a potion");
         }
     }
@@ -321,7 +321,7 @@ final class ServerConfigReader {
             instruments = id == null ? null : BuiltInRegistries.INSTRUMENT.getTag(TagKey.create(Registries.INSTRUMENT, id)).orElse(null);
         } else if (value instanceof String string) {
             ResourceLocation id = ResourceLocation.tryParse(string);
-            instruments = id == null ? null : BuiltInRegistries.INSTRUMENT.getHolder(id).<HolderSet<Instrument>>map(holder -> HolderSet.direct(List.of(holder))).orElse(null);
+            instruments = id == null ? null : BuiltInRegistries.INSTRUMENT.getHolder(ResourceKey.create(Registries.INSTRUMENT, id)).<HolderSet<Instrument>>map(holder -> HolderSet.direct(List.of(holder))).orElse(null);
         }
         if (instruments == null || instruments.size() == 0) {
             throw new InvalidEntryException("unknown instrument '" + value + "' in " + shortName(name));
@@ -341,9 +341,9 @@ final class ServerConfigReader {
     }
 
     private static void checkStackSize(Item item, int count, String name) {
-        if (count > item.getDefaultMaxStackSize()) {
+        if (count > item.getMaxStackSize()) {
             throw new InvalidEntryException("count " + count + " in " + shortName(name) + " is above the max stack size of "
-                    + BuiltInRegistries.ITEM.getKey(item) + " (" + item.getDefaultMaxStackSize() + ")");
+                    + BuiltInRegistries.ITEM.getKey(item) + " (" + item.getMaxStackSize() + ")");
         }
     }
 
